@@ -1,6 +1,16 @@
 var express = require('express');
 var cors = require('cors');
 require('dotenv').config()
+const multer = require('multer');
+
+
+// Multer set up for file upload and storage handling
+// Closely followed https://www.bacancytechnology.com/blog/file-upload-using-multer-with-nodejs-and-express and 
+// Multer docs on Github
+const fileStorage = multer.memoryStorage();
+
+const upload = multer({storage: fileStorage});
+
 
 var app = express();
 
@@ -12,9 +22,15 @@ app.get('/', function (req, res) {
 });
 
 
+app.post('/api/fileanalyse', upload.single('upfile'), (req, res) => {
+  let apiOutputScaffold = {name: req.file.originalname, type: req.file.mimetype, size: req.file.size};
+  res.send(apiOutputScaffold);
+})
 
 
-const port = process.env.PORT || 3000;
+
+
+const port = process.env.PORT || 8080;
 app.listen(port, function () {
   console.log('Your app is listening on port ' + port)
 });
